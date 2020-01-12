@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono&display=swap" rel="stylesheet"> 
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <% if (games.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Players per game</th>
+          <th>Points by position</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% games.forEach(game => { %>
+        <tr>
+          <td>
+	    <a href="leaderboard/<%= game.leaderboard[0]._id %>">
+	      <%= game.name %>
+	    </a>
+	  </td>
+          <td><%= game.playersPerGame %></td>
+          <td><%= game.pointsByPosition %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+    <form action="game/add-game" method="POST">
+        <input name="name" placeholder="Name" type="text">
+        <input name="players" placeholder="Players" type="text">
+        <input name="points" placeholder="Points" type="text">
+        <button type="submit">Save!</button>
+    </form>
+  </body>
+</html>

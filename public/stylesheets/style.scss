@@ -1,0 +1,32 @@
+html {
+    font-family: 'Ubuntu Mono', monospace;
+    background-color: darkblue;
+    color: white;
+
+    a {
+	color: orange;
+	
+	&:visited {
+	    color: red;
+	}
+    }
+
+    table {
+        margin: 30px;
+        padding: 30px;
+
+        th {
+            padding-left: 20px;
+            padding-right: 20px;
+            text-align: left;
+	    color: yellow;
+        }
+
+        td {
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 7px;
+            text-align: right;
+        }
+    }
+}
