@@ -10,7 +10,7 @@ class Game {
     }
 
     getPointsByPosition(position) {
-	    return this.pointPerGame[position];
+	return this.pointsByPosition[position];
     }
 
     getPlayersMultiplier(players) {
