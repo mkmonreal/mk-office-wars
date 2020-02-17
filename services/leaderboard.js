@@ -15,8 +15,7 @@ let createNewLeaderboard = function (gameId) {
     client.connect(async function (err) {
         if (err) throw err;
 
-        db = client.db(dbName);
-        await db.collection(collection).insertOne(leaderboard, function (err, result) {
+        await client.db(dbName).collection(collection).insertOne(leaderboard, function (err, result) {
             if (err) throw err;
 
             client.close();
@@ -62,6 +61,8 @@ let getLeaderboardByIdWithGame = async function (id) {
 	}
     ]);
     let result = await cursor.toArray();
+    client.close();
+    
     return result[0];
 };
 
@@ -70,8 +71,7 @@ let getLeaderboardByGameId = async function (gameId) {
     let cursor = client.db(dbName).collection(collection).findOne({ gameId: new ObjectId(gameId) });
     let result = await cursor;
     client.close();
-
-    console.log(result);
+    
     return result;
 };
 

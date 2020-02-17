@@ -6,6 +6,21 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    
+    <% if (players.length > 0) { %>
+    <table>
+	<thead>
+		<th>Name</th>
+		<th>Nickname</th>
+	</thead>
+	<tbody>
+	<% players.forEach(player => { %>
+	   <tr>
+		<td><% player.name %></td>
+		<td><% player.nickname %></td>
+	   </tr>
+	<% }); %>
+	</tbody>
+    </table>
+    <% } %>
   </body>
 </html>
