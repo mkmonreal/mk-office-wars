@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongodb');
-const { client, dbName } = require('../dbConfig');
+const { getClient, dbName } = require('../dbConfig');
 
 const Leaderboard = require('../models/leaderboard');
 
@@ -11,7 +11,8 @@ var db;
 
 let createNewLeaderboard = function (gameId) {
     let leaderboard = new Leaderboard(gameId);
-
+    let client = getClient();
+    
     client.connect(async function (err) {
         if (err) throw err;
 
@@ -24,24 +25,38 @@ let createNewLeaderboard = function (gameId) {
 };
 
 let getLeaderboards = async function () {
-    client.connect();
-    let cursor = client.db(dbName).collection(collection).find({});
-    let result = await cursor.toArray();
-    client.close();
-    
-    return result;
+    try {
+	await client.connect();
+	let cursor = client.db(dbName).collection(collection).find({});
+	let result = await cursor.toArray();
+	client.close();
+	return result;
+    }
+    catch (err) {
+	console.error(err);
+    }
+    finally {
+	client.close();
+    }
 };
 
 let  getLeaderboardById = async function (id) {
-    client.connect();
-    let cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
-    let result = await cursor;
-    client.close();
+    let client = getClient();
+    try {
+	await client.connect();
+	let cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
+	let result = await cursor;
+	client.close();
 
-    return result;
+	return result;
+    }
+    catch(err) {
+	console.error(err);
+    }
 };
 
 let getLeaderboardByIdWithGame = async function (id) {
+    const client = getClient();
     client.connect();
     let cursor = client.db(dbName).collection(collection).aggregate([
 	{

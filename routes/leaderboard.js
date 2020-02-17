@@ -19,6 +19,7 @@ router.get('/:id', async function (req, res, next) {
     
     let leaderboard = await leaderboardService.getLeaderboardById(id);
 
+    console.log(leaderboard);
     res.render('leaderboard', {
 	id: leaderboard._id,
 	name: "",
@@ -32,6 +33,7 @@ router.post('/add-points', async function (req, res, next) {
 
     let playersAndPositions = raw.split('\r\n');
     let points = [];
+    let redirection = '/leaderboard/' + id;
     playersAndPositions.forEach(player => {
 	points.push({
 	    name: player.split(' - ')[0],
@@ -39,9 +41,12 @@ router.post('/add-points', async function (req, res, next) {
 	});
     });
 
-    await pointsService.addPoints(id, points);
-
-    res.redirect('/leaderboard/' + id);
+    try {
+	let result = await pointsService.addPoints(id, points);
+    }
+    catch(err) {
+	console.error(err);
+    }
 });
 
 module.exports = router;

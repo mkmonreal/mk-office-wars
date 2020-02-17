@@ -14,7 +14,8 @@ class Game {
     }
 
     getPlayersMultiplier(players) {
-	    return (players - 1) / (this.playersPerGame - 1);
+	if (players >= this.playersPerGame) return 1;
+	return (players - 1) / (this.playersPerGame - 1);
     }
 
     static parseGame(game) {
