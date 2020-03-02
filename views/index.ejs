@@ -6,9 +6,14 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
 
+    <% for (let leaderboard of leaderboards) { %>
+    <h3>
+      <%= leaderboard.games[0].name %>
+    </h3>
     <table>
       <thead>
         <tr>
@@ -18,14 +23,10 @@
         </tr>
       </thead>
       <tbody>
-	<% for (let i = 0; i < players.length; i++) { %>
-        <tr>
-          <td><%= i+1 + "º" %></td>
-          <td><%= players[i].name %></td>
-          <td><%= players[i].points %></td>
-        </tr>
-        <% }; %>
+	
       </tbody>
     </table>
+    <% } %>
+    
   </body>
 </html>

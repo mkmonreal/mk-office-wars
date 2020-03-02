@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongodb');
+ const { ObjectId } = require('mongodb');
 
 class Game {
     constructor(name, playersPerGame, pointsByPosition, id, startDate) {
