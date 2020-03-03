@@ -10,11 +10,6 @@ const collection = 'leaderboards';
 var db;
 
 class LeaderboardService {
-
-    newfunction() {
-	console.log("Funcion reconocida");
-    }
-    
     static async getLeaderboards() {
 	const CLIENT = getClient();
 	try {
@@ -32,27 +27,28 @@ class LeaderboardService {
 	}
     }
 
-    createNewLeaderboard(gameId) {
+    static async createNewLeaderboard(gameId) {
 	let leaderboard = new Leaderboard(gameId);
 	let client = getClient();
-	
-	client.connect(async function (err) {
-            if (err) throw err;
 
-            await client.db(dbName).collection(collection).insertOne(leaderboard, function (err, result) {
-		if (err) throw err;
+	try {
+	    await client.connect();
+	    client.db(dbName).collection(collection).insertOne(leaderboard);
+	} catch(err) {
+	    console.error(err);
+	} finally {
+	    client.close();
+	}
 
-		client.close();
-            })
-	});
     }
 
     static async getLeaderboardById(id) {
+	let cursor, result;
 	let client = getClient();
 	try {
 	    await client.connect();
-	    let cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
-	    let result = await cursor;
+	    cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
+	    result = await cursor;
 	    client.close();
 
 	    return result;
@@ -65,6 +61,7 @@ class LeaderboardService {
 
     static async getLeaderboardsWithGames() {
 	const CLIENT = getClient();
+	let result;
 	try {
 	    await CLIENT.connect();
 	    let cursor = CLIENT.db(dbName).collection(collection).aggregate([
@@ -78,7 +75,7 @@ class LeaderboardService {
 		    }
 		}
 	    ]);
-	    let result = await cursor.toArray();
+	    result = await cursor.toArray();
 	    CLIENT.close();
 	    
 	    return result;
