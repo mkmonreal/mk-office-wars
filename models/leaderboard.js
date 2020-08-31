@@ -1,5 +1,8 @@
+const { ObjectId } = require('mongodb');
+
 class Leaderboard {
-    constructor(gameId, clasification, lastUpdate, startDate) {
+    constructor({ _id, gameId, clasification, lastUpdate, startDate }) {
+	this._id = _id || new ObjectId();
 	this.gameId = gameId;
 	this.clasification = clasification || [];
 	this.lastUpdate = lastUpdate || new Date();
