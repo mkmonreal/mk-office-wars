@@ -5,11 +5,8 @@ var gameService = require('../services/game');
 let LeaderboardService = require('../services/leaderboard');
 
 /* GET home page. */
-router.get('/', async function(req, res, next) {
-    let leaderboards = await LeaderboardService.getLeaderboardsWithGames();
-    res.render('index', {
-	title: "Mario Kart Office Wars",
-	leaderboards: leaderboards });
+router.get('/', function(req, res, next) {
+    res.json(req.body);
 });
 
 module.exports = router;

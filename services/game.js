@@ -1,79 +1,59 @@
 const { ObjectId } = require('mongodb');
 
-const { client, dbName } = require('../dbConfig');
-const leaderboardService = require('./leaderboard');
+const { getClient, dbName } = require('../dbConfig');
 
 const Game = require('../models/game');
 
 const collection = 'games';
 
 class GameService {
-    async createNewGame(name, players, points) {
-	let  game = new Game(name, players, points);
-
-	client.connect();
-	let cursor = client.db(dbName).collection(collection).insertOne(game);
-	cursor.catch(function (err) {
-	    throw err;
-	})
-	let result = await cursor;
-	game = result.ops[0];
-
-	leaderboardService.createNewLeaderboard(game._id);
-    }
-
-    async getGameById(id) {
-	client.connect();
-	let cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
-	let result = await cursor;
-	client.close();
-
-	return result;
-    }
-
-    getGameByName (name) {
-	client.connect(uri, async function (err, db) {
-            if (err) throw err;
-
-            db = client.db(dbName);
-            await db.collection(collection).findOne({ name }, function (err, result) {
-		if (err) throw err;
-		
+    static async createGame(name, playersPerGame, pointsByPosition) {
+	const client = getClient();
+	try {
+	    await client.connect();
+ 	    let game = new Game({ name, playersPerGame, pointsByPosition });
+	    const cursor = client.db(dbName).collection(collection).insertOne(game);
+	    const result = await cursor;
+	    client.close();
+	    game = new Game(result.ops[0]);
+	    return game;
+	}
+	catch (err) {
+	    console.error(err);
+	    if (client) {
 		client.close();
-            });
-	});
+	    }
+	}
     }
 
     async getGames() {
-	client.connect();
-	let cursor = client.db(dbName).collection(collection).find({});
-	let result = await cursor.toArray();
-	client.close();
-
-	return result;
-    }
-
-    async getGamesWithLeaderboard() {
 	try {
+	    const client = getClient();
 	    client.connect();
-	    let cursor = client.db(dbName).collection(collection).aggregate([
-		{
-		    $lookup:
-		    {
-			from: leaderboardService.leaderboardCollection,
-			localField: '_id',
-			foreignField: 'gameId',
-			as: 'leaderboard'
-		    }
-		}
-	    ]);
-	    let result = await cursor.toArray();
+	    let cursor = client.db(dbName).collection(collection).find({});
+	    let result = await cursor.map(game => new Game(game));
+	    client.close();
 
 	    return result;
-	} catch (err) {
+	}
+	catch (err){
 	    console.error(err);
-	} finally {
 	    client.close();
+	}
+
+    }
+
+    async getGameById(id) {
+	try {
+	    const client = getClient();
+	    let cursor = client.db(dbName).collection(collection).findOne({ '_id': new ObjectId(id) });
+	    let result = new Game(await cursor);
+	    client.close();
+	    return result;
+	}
+	catch (err) {
+	    client.close();
+	    console.error(err);
 	}
     }
 }

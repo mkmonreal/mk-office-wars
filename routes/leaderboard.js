@@ -1,8 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var gameService = require('../services/game');
-var leaderboardService = require('../services/leaderboard');
+const leaderboardService = require('../services/leaderboard');
 const pointsService = require('../services/points');
+
+router.post('/', async (req, res, next) => {
+    try {
+	const params = req.body;
+	const leaderboard = await leaderboardService.createLeaderboard(params.name, params.playersPerGame, params.pointsByPosition);
+	res.json(leaderboard);
+    }
+    catch (err) {
+	console.error(err);
+	
+    }
+});
 
 router.get('/', async function (req, res, next) {
     let leaderboards = await leaderboardService.getLeaderboards();
